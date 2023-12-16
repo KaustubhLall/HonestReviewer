@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+
+<h2>Product Reviews</h2>
+<!-- Form for Viewing Reviews -->
+<form method="get">
+    <!-- Multi-Select Dropdown for Products -->
+    <div class="form-group">
+        <label for="productSelect">Select Products</label>
+        <select multiple class="form-control" id="productSelect" name="product">
+            <option value="all">All Products</option>
+            {% for product in all_products %}
+                <option value="{{ product.asin }}" {% if product.asin|stringformat:"s" in selected_products %}selected{% endif %}>{{ product.asin }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Filter">
+    </div>
+</form>
+
+<!-- Pagination Controls -->
+<nav>
+    <ul class="pagination">
+        {% for product in selected_products %}
+            <input type="hidden" name="product" value="{{ product }}">
+        {% endfor %}
+
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for product in selected_products %}&product={{ product }}{% endfor %}">previous</a>
+            </li>
+        {% endif %}
+
+        <!-- Current Page Info -->
+        <li class="page-item disabled">
+            <a class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for product in selected_products %}&product={{ product }}{% endfor %}">next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+
+
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th>ASIN</th>
+        <th>Review Text</th>
+        <th>Summary Text</th>
+        <th>Overall Rating</th>
+        <th>Vote</th>
+        <th>Verified</th>
+        <th>Helpfulness Score</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in page_obj %}
+    <tr>
+        <td>{{ product.product.asin }}</td>
+        <td>{{ product.review_text }}</td>
+        <td>{{ product.summary_text }}</td>
+        <td>{{ product.overall }}</td>
+        <td>{{ product.vote }}</td>
+        <td>{{ product.verified }}</td>
+        <td>{{ product.helpfulness_classification }}</td>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
+
+<!-- Bootstrap JS and its dependencies -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

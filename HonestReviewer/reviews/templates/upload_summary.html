@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Summary</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    {% extends 'base.html' %}
+
+    {% block content %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>File Upload Summary</h3>
+            </div>
+            <div class="card-body">
+                <p>Total Records: {{ summary.total_records }}</p>
+                <p>Successful Records: {{ summary.successful_records }}</p>
+                <p>Failed Records: {{ summary.failed_records }}</p>
+
+                <!-- Errors Section -->
+                {% if summary.errors %}
+                <p>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseErrors" role="button" aria-expanded="false" aria-controls="collapseErrors">
+                        Show/Hide Errors
+                    </a>
+                </p>
+                <div class="collapse" id="collapseErrors">
+                    <div class="card card-body">
+                        <ul>
+                            {% for error in summary.errors %}
+                            <li><pre><code>{{ error }}</code></pre></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <h3 class="mt-4">Data Overview</h3>
+        <a href="{% url 'product_list' %}">
+            <button class="btn btn-info">View Products</button>
+        </a>
+    </div>
+
+    <!-- Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    {% endblock %}
+</body>
+</html>

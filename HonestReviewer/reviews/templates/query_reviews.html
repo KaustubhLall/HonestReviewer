@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ask The Reviewers</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">Ask The Reviewers</h2>
+    <form method="post" class="mb-3">
+      {% csrf_token %}
+      <div class="form-group">
+        <h3>Select Product:</h3>
+        {{ product_form.as_p }}
+      </div>
+      {% if selected_product %}
+        <div class="form-group">
+          <h3>Enter Your Query:</h3>
+          {{ query_form.as_p }}
+        </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+{% if summary_answer %}
+  <div class="alert alert-info mt-4">
+    <h4>Summary Answer:</h4>
+    <p>{{ summary_answer }}</p>
+  </div>
+{% endif %}
+    {% if selected_product %}
+      <h3>Results for {{ selected_product }}:</h3>
+      <ul class="list-group">
+        {% for item in review_results_with_scores %}
+          <li class="list-group-item">
+            <strong>Title:</strong> {{ item.review.summary_text }}<br>
+            <strong>Rating:</strong> {{ item.review.overall }}<br>
+            <strong>Review:</strong> {{ item.review.review_text }}<br>
+            {% if item.review.helpfulness_classification %}
+              <strong>Helpfulness Classification:</strong> {{ item.review.helpfulness_classification }}<br>
+            {% endif %}
+            <strong>Relevance Score:</strong> {{ item.score|floatformat:2 }}
+          </li>
+        {% empty %}
+          <li class="list-group-item">No results.</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+  </div>
+{% endblock %}
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

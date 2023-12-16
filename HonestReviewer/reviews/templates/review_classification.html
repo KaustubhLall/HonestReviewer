@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Review Helpfulness</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Select a Product to View Reviews</h2>
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ product_form.as_p }}
+        </div>
+        <button type="submit" name="select_product" class="btn btn-primary">View Reviews</button>
+    </form>
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if reviews_page %}
+    <h2>Classify Reviews for {{ selected_product }}</h2>
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% for num in reviews_page.paginator.page_range %}
+                <li class="page-item {% if reviews_page.number == num %}active{% endif %}">
+                    <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        <button type="submit" name="classify" class="btn btn-success">Classify Selected Reviews</button>
+
+        {% for review in reviews_page %}
+
+        <div class="card mb-2">
+            <div class="card-body d-flex">
+                <div class="form-check flex-grow-1">
+                    <input class="form-check-input" type="checkbox" name="reviews" value="{{ review.id }}"
+                           id="review{{ review.id }}">
+                    <label class="form-check-label" for="review{{ review.id }}">
+                        {{ review.get_review }}
+                    </label>
+                </div>
+                <div class="border-left pl-3">
+                    {% if review.helpfulness_classification %}
+                    <strong>Classification:</strong>
+                    <ul class="list-unstyled mb-0">
+                        {{ review.helpfulness_classification }}%
+                    </ul>
+                    {% else %}
+                    <span>Not Classified</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
